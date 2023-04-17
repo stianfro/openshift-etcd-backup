@@ -27,6 +27,8 @@ spec:
             envFrom:
             - configMapRef:
                 name: backup-config
+            - secretMapRef:
+                name: s3-config
             securityContext:
               privileged: true
               runAsUser: 0
@@ -51,5 +53,4 @@ spec:
               type: Directory
             name: host
           - name: volume-backup
-            persistentVolumeClaim:
-              claimName: etcd-backup-pvc
+            emptyDir: {}
