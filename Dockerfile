@@ -7,5 +7,6 @@ COPY backup.sh /usr/local/bin/backup.sh
 
 RUN microdnf update -y && rm -rf /var/cache/yum
 RUN microdnf install findutils -y && microdnf clean all
+RUN curl https://dl.min.io/client/mc/release/linux-amd64/mc --create-dirs -o /usr/local/bin/mc
 
 CMD ["/usr/local/bin/backup.sh"]
