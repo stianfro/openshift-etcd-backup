@@ -1,5 +1,9 @@
 # OpenShift etcd backup CronJob
 
+This fork uploads the backup to S3 compatible object storage instead of storing on a persistent volume.
+
+---
+
 This CronJob creates an POD which runs `/usr/local/bin/cluster-backup.sh` on a master-node to create the described backup. After finishing, it copies the files to an configured PV and expires old backups according to its configuration.
 
 The OpenShift 4 backup generates 2 different files with the date when it is performed:
@@ -75,6 +79,16 @@ Changing the schedule be done in the CronJob directly, with `spec.schedule`:
 oc edit -n etcd-backup cronjob/etcd-backup
 ```
 Default is `0 0 * * *` which means the cronjob runs one time a day at midnight.
+
+### S3 Configuration
+
+Some secrets must be provided as environment variables for uploading to S3 object storage:
+- `S3_ENDPOINT`: Endpoint to use for S3 or S3 compatible services.
+- `S3_BUCKET`: Bucket to store backups in.
+- `S3_ACCESSKEY`: Access key for S3.
+- `S3_SECRETKEY`: Secret key for S3.
+
+The suggested method is to use a secret named `s3-config` with the keys above, together with their respective values. The secret is loaded as environment variables with `secretRef` in `backup-cronjob.yaml`.
 
 ## Monitoring
 
