@@ -72,21 +72,21 @@ rm -rv /host/var/tmp/etcd-backup
 # upload to s3 if S3_ENDPOINT variable is not empty
 if [ -z "${S3_ENDPOINT}" ]; then
   # verify all variables
-  if [ -z "${S3_ACCESSKEY}"]; then
+  if [ -z "${S3_ACCESSKEY}" ]; then
     echo "S3_ACCESSKEY is not set"
     exit 1
   fi
-  if [ -z "${S3_SECRETKEY}"]; then
+  if [ -z "${S3_SECRETKEY}" ]; then
     echo "S3_SECRETKEY is not set"
     exit 1
   fi
-  if [ -z "${S3_BUCKET}"]; then
+  if [ -z "${S3_BUCKET}" ]; then
     echo "S3_BUCKET is not set"
     exit 1
   fi
 
   # create alias for mc cli
-  mc alias set backup ${S3_ENDPOINT} ${S3_ACCESSKEY} ${S3_SECRETKEY}
+  mc alias set backup "${S3_ENDPOINT}" "${S3_ACCESSKEY}" "${S3_SECRETKEY}"
 
   # upload files
   mc cp --recursive "${BACKUP_PATH_POD}" backup/"${S3_BUCKET}"
