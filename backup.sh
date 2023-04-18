@@ -100,7 +100,13 @@ tar -czvf "/tmp/${BACKUP_FILENAME}" \
 echo "${S3_ENCRYPTIONKEY}" > /tmp/encryption.key
 
 # encrypt the archive
-openssl enc -aes-256-cbc -salt -in "/tmp/${BACKUP_FILENAME}" -out "/tmp/${BACKUP_FILENAME}.enc" -pass file:/tmp/encryption.key
+openssl enc -aes-256-cbc \
+            -salt \
+            -in "/tmp/${BACKUP_FILENAME}" \
+            -out "/tmp/${BACKUP_FILENAME}.enc" \
+            -pass file:/tmp/encryption.key \
+            -pbkdf2 \
+            -iter 10000
 
 # create alias for mc cli
 set +x
