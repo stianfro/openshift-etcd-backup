@@ -97,7 +97,9 @@ tar -czvf "/tmp/${BACKUP_FILENAME}" \
           "${BACKUP_PATH_POD}"
 
 # write encryption key to file
+set +x
 echo "${S3_ENCRYPTIONKEY}" > /tmp/encryption.key
+set -x
 
 # encrypt the archive
 openssl enc -aes-256-cbc \
