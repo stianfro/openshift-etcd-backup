@@ -25,10 +25,10 @@ spec:
                 cpu: 1000m
                 memory: 512Mi
             envFrom:
-            - configMapRef:
-                name: backup-config
-            - secretMapRef:
-                name: s3-config
+              - configMapRef:
+                  name: backup-config
+              - secretRef:
+                  name: s3-config
             securityContext:
               privileged: true
               runAsUser: 0
