@@ -70,6 +70,7 @@ mv /host/var/tmp/etcd-backup/* "${BACKUP_PATH_POD}"
 rm -rv /host/var/tmp/etcd-backup
 
 # upload to s3
+set +x
 if [ -z "${S3_ACCESSKEY}" ]; then
   echo "S3_ACCESSKEY is not set"
   exit 1
@@ -86,6 +87,7 @@ if [ -z "${S3_ENCRYPTIONKEY}" ]; then
   echo "S3_ENCRYPTIONKEY is not set"
   exit 1
 fi
+set -x
 
 # create filename
 BACKUP_FILENAME=etcd-backup-$(date +%s).tar.gz
@@ -101,7 +103,9 @@ echo "${S3_ENCRYPTIONKEY}" > /tmp/encryption.key
 openssl enc -aes-256-cbc -salt -in "/tmp/${BACKUP_FILENAME}" -out "/tmp/${BACKUP_FILENAME}.enc" -pass file:/tmp/encryption.key
 
 # create alias for mc cli
+set +x
 mc alias set backup "${S3_ENDPOINT}" "${S3_ACCESSKEY}" "${S3_SECRETKEY}"
+set -x
 
 # upload files
 mc cp "/tmp/${BACKUP_FILENAME}.enc" backup/"${S3_BUCKET}"
