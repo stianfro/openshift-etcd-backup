@@ -69,32 +69,29 @@ chroot /host /usr/local/bin/cluster-backup.sh /var/tmp/etcd-backup
 mv /host/var/tmp/etcd-backup/* "${BACKUP_PATH_POD}"
 rm -rv /host/var/tmp/etcd-backup
 
-# upload to s3 if S3_ENDPOINT variable is not empty
-if [ -z "${S3_ENDPOINT}" ]; then
-  # verify all variables
-  if [ -z "${S3_ACCESSKEY}" ]; then
-    echo "S3_ACCESSKEY is not set"
-    exit 1
-  fi
-  if [ -z "${S3_SECRETKEY}" ]; then
-    echo "S3_SECRETKEY is not set"
-    exit 1
-  fi
-  if [ -z "${S3_BUCKET}" ]; then
-    echo "S3_BUCKET is not set"
-    exit 1
-  fi
+# upload to s3
+if [ -z "${S3_ACCESSKEY}" ]; then
+  echo "S3_ACCESSKEY is not set"
+  exit 1
+fi
+if [ -z "${S3_SECRETKEY}" ]; then
+  echo "S3_SECRETKEY is not set"
+  exit 1
+fi
+if [ -z "${S3_BUCKET}" ]; then
+  echo "S3_BUCKET is not set"
+  exit 1
+fi
 
-  # create alias for mc cli
-  mc alias set backup "${S3_ENDPOINT}" "${S3_ACCESSKEY}" "${S3_SECRETKEY}"
+# create alias for mc cli
+mc alias set backup "${S3_ENDPOINT}" "${S3_ACCESSKEY}" "${S3_SECRETKEY}"
 
-  # upload files
-  mc cp --recursive "${BACKUP_PATH_POD}" backup/"${S3_BUCKET}"
+# upload files
+mc cp --recursive "${BACKUP_PATH_POD}" backup/"${S3_BUCKET}"
 
-  # expire s3 backup
-  if [ "${OCP_BACKUP_EXPIRE_TYPE}" = "days" ]; then
-    mc rm --recursive --force --older-than "${OCP_BACKUP_KEEP_DAYS}"d backup/"${S3_BUCKET}"
-  fi
+# expire s3 backup
+if [ "${OCP_BACKUP_EXPIRE_TYPE}" = "days" ]; then
+  mc rm --recursive --force --older-than "${OCP_BACKUP_KEEP_DAYS}"d backup/"${S3_BUCKET}"
 fi
 
 # expire backup
