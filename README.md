@@ -87,6 +87,7 @@ Some secrets must be provided as environment variables for uploading to S3 objec
 - `S3_BUCKET`: Bucket to store backups in.
 - `S3_ACCESSKEY`: Access key for S3.
 - `S3_SECRETKEY`: Secret key for S3.
+- `S3_ENCRYPTIONKEY`: Key used to encrypt archive uploaded to s3.
 
 The suggested method is to use a secret named `s3-config` with the keys above, together with their respective values. The secret is loaded as environment variables with `secretRef` in `backup-cronjob.yaml`.
 
