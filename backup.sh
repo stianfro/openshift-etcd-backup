@@ -82,12 +82,32 @@ if [ -z "${S3_BUCKET}" ]; then
   echo "S3_BUCKET is not set"
   exit 1
 fi
+if [ -z "${S3_ENCRYPTIONKEY}" ]; then
+  echo "S3_ENCRYPTIONKEY is not set"
+  exit 1
+fi
+
+# create filename
+BACKUP_FILENAME=etcd-backup-$(date +%s).tar.gz
+
+# create archive
+tar -czvf "/tmp/${BACKUP_FILENAME}" \
+          "${BACKUP_PATH_POD}"
+
+# write encryption key to file
+echo "${S3_ENCRYPTIONKEY}" > /tmp/encryption.key
+
+# encrypt the archive
+openssl enc -aes-256-cbc -salt -in "/tmp/${BACKUP_FILENAME}" -out "/tmp/${BACKUP_FILENAME}.enc" -pass file:/tmp/encryption.key
 
 # create alias for mc cli
 mc alias set backup "${S3_ENDPOINT}" "${S3_ACCESSKEY}" "${S3_SECRETKEY}"
 
 # upload files
-mc cp --recursive "${BACKUP_PATH_POD}" backup/"${S3_BUCKET}"
+mc cp "/tmp/${BACKUP_FILENAME}.enc" backup/"${S3_BUCKET}"
+
+# cleanup
+rm -f "/tmp/${BACKUP_FILENAME}" "/tmp/${BACKUP_FILENAME}.enc" /tmp/encryption.key
 
 # expire s3 backup
 if [ "${OCP_BACKUP_EXPIRE_TYPE}" = "days" ]; then
