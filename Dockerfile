@@ -6,7 +6,7 @@ LABEL org.opencontainers.image.vendor="Stian Frøystein"
 COPY backup.sh /usr/local/bin/backup.sh
 
 RUN microdnf update -y && rm -rf /var/cache/yum
-RUN microdnf install findutils -y && microdnf clean all
+RUN microdnf install findutils tar -y && microdnf clean all
 RUN curl https://dl.min.io/client/mc/release/linux-amd64/mc --create-dirs -o /usr/local/bin/mc &&\
     chmod 755 /usr/local/bin/mc
 
