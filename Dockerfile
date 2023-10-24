@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi8-minimal:8.7-1107
+FROM registry.access.redhat.com/ubi8-minimal:8.8-1072.1697626218
 
 LABEL org.opencontainers.image.authors="Stian Frøystein <https://github.com/stianfro>"
 LABEL org.opencontainers.image.vendor="Stian Frøystein"
